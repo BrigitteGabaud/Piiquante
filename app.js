@@ -1,8 +1,9 @@
 const express = require('express');
-
 const mongoose = require('mongoose');
-
 const app = express();
+
+const Sauce = require('./models/sauces');
+
 
 mongoose.connect("mongodb+srv://Bri:BriexoOC@clustersopekocko.stgj0.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
   { useNewUrlParser: true,
@@ -21,33 +22,29 @@ app.use((req, res, next) => {
 /* Transforme le corps de la requête en objet javascript */
 app.use(express.json());
 
+/* Requête création nouvelle sauce*/
 app.post('/api/sauces', (req, res, next) => {
-    console.log(req.body);
-    res.status(201).json({
-        message: 'Sauce créée !'
-    })
+    delete req.body._id;
+    const sauce = new Sauce({
+        ...req.body
+    });
+    sauce.save()
+    .then(() => res.status(201).json({ message: 'Sauce enregistrée !'}))
+    .catch(error => res.status(400).json({ error }));
+});
+
+/* Route Get: renvoie une seule sauce grâce à la méthode findOne et l'objet de comparaison*/
+app.get('/api/sauces/:id', (req, res, next) => {
+    Sauce.findOne({_id: req.params.id}) 
+    .then(sauce => res.status(200).json(sauce))
+    .catch(error => res.status(404).json({ error }));
 })
 
-app.use('/api/sauces', (req, res, next) => {
-    const sauces = [
-      {
-        _id: 'oeihfzeoi',
-        title: 'Mon premier objet',
-        description: 'Les infos de mon premier objet',
-        imageUrl: 'https://cdn.pixabay.com/photo/2019/06/11/18/56/camera-4267692_1280.jpg',
-        price: 4900,
-        userId: 'qsomihvqios',
-      },
-      {
-        _id: 'oeihfzeomoihi',
-        title: 'Mon deuxième objet',
-        description: 'Les infos de mon deuxième objet',
-        imageUrl: 'https://cdn.pixabay.com/photo/2019/06/11/18/56/camera-4267692_1280.jpg',
-        price: 2900,
-        userId: 'qsomihvqios',
-      },
-    ];
-    res.status(200).json(sauces);
+/* Route Get: renvoie toutes les sauces dans la base de données */
+app.get('/api/sauces', (req, res, next) => {
+    Sauce.find()
+    .then(sauces => res.status(200).json(sauces))
+    .catch(error => res.status(400).json({ error }));
   });
 
 module.exports = app;
