@@ -33,6 +33,20 @@ app.post('/api/sauces', (req, res, next) => {
     .catch(error => res.status(400).json({ error }));
 });
 
+/* Route Put: modifie une sauce*/
+app.put('/api/sauces/:id', (req, res, next) => {
+    Sauce.updateOne({_id: req.params.id }, {...req.body, _id: req.params.id })
+    .then(() => res.status(200).json({ message: 'Sauce modifiée !'}))
+    .catch(error => res.status(400).json({ error }));
+})
+
+/* Route Delete: supprime une sauce*/
+app.delete('/api/suaces/:id', (req, res, next) => {
+    Sauce.deleteOne({_id: req.params.body})
+    .then(() => res.status(200).json({ message:'Sauce supprimée !'}))
+    .catch(error => res.status(404).json({ error }));
+})
+
 /* Route Get: renvoie une seule sauce grâce à la méthode findOne et l'objet de comparaison*/
 app.get('/api/sauces/:id', (req, res, next) => {
     Sauce.findOne({_id: req.params.id}) 
