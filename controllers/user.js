@@ -6,11 +6,12 @@ const User = require('../models/User');
 /* Export de la fonction inscription */
 exports.signup = (req, res, next)=> {
     User.findOne({email: req.body.email})
+    /* Recherche l'adresse mail envoyée et vérifie si elle est unique*/
     .then(user => {
         if(user) {
             return  res.status(403).json({ error: 'Adresse mail déjà enregistrée'})};
         })
-        
+    /* Hache le mot de pase*/    
     bcrypt.hash(req.body.password, 10)
     .then(hash => {
         const user = new User({

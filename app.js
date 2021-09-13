@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const app = express();
+const path = require('path');
 
 const saucesRoutes = require('./routes/sauces');
 const usersRoutes = require('./routes/user');
@@ -10,6 +10,8 @@ mongoose.connect("mongodb+srv://Bri:BriexoOC@clustersopekocko.stgj0.mongodb.net/
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
+
+const app = express();
 
 /* Middleware headers général */
 app.use((req, res, next) => {
@@ -21,6 +23,9 @@ app.use((req, res, next) => {
 
 /* Transforme le corps de la requête en objet javascript */
 app.use(express.json());
+
+/* Indique à app quel fichier image (static) servir */
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use('/api/sauces', saucesRoutes);
 app.use('/api/auth', usersRoutes);

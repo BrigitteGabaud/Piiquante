@@ -1,10 +1,15 @@
 const Sauce = require('../models/sauces');
 
-/* Export de la fonction création Sauce */
+/* Export de la fonction création Sauce (POST) */
 exports.createSauce = (req, res, next) => {
-    delete req.body._id;
+    /* Convertit chaîne caractères (= objet js) du corps requête 'req.body.sauce' en objet json extrait du 'sauce' */
+    const sauceObject = JSON.parse(req.body.sauce);
+    /* Supprime id de sauceObject */
+    delete sauceObject._id;
     const sauce = new Sauce({
-        ...req.body
+        ...sauceObject, 
+        /* Génère url image = protocole + nom hôte + 'image' + nom fichier */
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     });
     sauce.save()
     .then(() => res.status(201).json({ message: 'Sauce enregistrée !'}))
