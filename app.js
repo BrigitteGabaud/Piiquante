@@ -24,7 +24,7 @@ app.use((req, res, next) => {
 /* Transforme le corps de la requête en objet javascript */
 app.use(express.json());
 
-/* Indique à app quel fichier image (static) servir */
+/* Indique à app quel fichier image (static) servir à l'aide de path pour accéder au chemin */
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use('/api/sauces', saucesRoutes);

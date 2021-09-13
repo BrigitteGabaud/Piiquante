@@ -1,4 +1,6 @@
 const Sauce = require('../models/sauces');
+/* donne accès aux opérations liées aux syst de fichiers */
+const fs = require('fs'); 
 
 /* Export de la fonction création Sauce (POST) */
 exports.createSauce = (req, res, next) => {
@@ -25,9 +27,20 @@ exports.modifySauce = (req, res, next) => {
 
 /* Export de la fonction suppression sauce */
 exports.deleteSauce = (req, res, next) => {
-    Sauce.deleteOne({_id: req.params.body})
-    .then(() => res.status(200).json({ message:'Sauce supprimée !'}))
-    .catch(error => res.status(404).json({ error }));
+    /* Accède à l'objet pour récup url image + nom fichier */
+    Sauce.findOne({_id: req.params.id})
+    /* callback récupère sauce + nom exact fichier */
+    .then(sauce => {
+        /* Extrait nom du fichier à suppr :Récupère imageUrl sauce retournée / base + split autour '/images/' et retourne tableau de 2 elmts avant/ après /images/ */
+        const filename = sauce.imageUrl.split('/images/')[1];
+        /* Fonction suppression fichier: 1er arg= chemin fichier 2e = callback (que faire une fois fichier suppr ? = suppr objet dans la base) */
+        fs.unlink(`images/$(filename)`, () => {
+            Sauce.deleteOne({_id: req.params.body})
+                .then(() => res.status(200).json({ message:'Sauce supprimée !'}))
+                .catch(error => res.status(404).json({ error }));
+        })
+    })
+    .catch(error => res.status(500).json({ error}));
 };
 
 /* Export de la fonction récupération une sauce */
