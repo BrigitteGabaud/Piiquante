@@ -2,20 +2,21 @@ const express = require('express');
 const router = express.Router();
 
 const sauceCtrl = require('../controllers/sauces');
+const auth = require('../middleware/auth');
 
 /* Route Post: crée une nouvelle sauce*/
-router.post('/', sauceCtrl.createSauce);
+router.post('/', auth, sauceCtrl.createSauce);
 
 /* Route Put: modifie une sauce*/
-router.put('/:id', sauceCtrl.modifySauce);
+router.put('/:id', auth, sauceCtrl.modifySauce);
 
 /* Route Delete: supprime une sauce*/
-router.delete('/:id', sauceCtrl.deleteSauce);
+router.delete('/:id', auth, sauceCtrl.deleteSauce);
 
 /* Route Get: renvoie une seule sauce grâce à la méthode findOne et l'objet de comparaison*/
-router.get('/:id', sauceCtrl.getOneSauce);
+router.get('/:id', auth, sauceCtrl.getOneSauce);
 
 /* Route Get: renvoie toutes les sauces dans la base de données */
-router.get('/', sauceCtrl.getAllSauces);
+router.get('/', auth, sauceCtrl.getAllSauces);
 
 module.exports = router; 
