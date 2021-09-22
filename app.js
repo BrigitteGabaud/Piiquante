@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
+const helmet = require('helmet');
 
 const saucesRoutes = require('./routes/sauces');
 const usersRoutes = require('./routes/user');
@@ -21,10 +22,13 @@ app.use((req, res, next) => {
     next();
 });
 
+/* Ajoute de la sécurité dans les headers */
+app.use(helmet());
+
 /* Transforme le corps de la requête en objet javascript */
 app.use(express.json());
 
-/* Indique à app quel fichier image (static) servir à l'aide de path pour accéder au chemin */
+/* Récupère l'image dans dossier image pour envoyer vers frontend */
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use('/api/sauces', saucesRoutes);
