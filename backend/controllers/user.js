@@ -1,6 +1,6 @@
+"use strict";
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
 const User = require('../models/User');
 
 /* Export de la fonction inscription */

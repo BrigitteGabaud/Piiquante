@@ -1,3 +1,4 @@
+"use strict";
 const rateLimit = require('express-rate-limit');
 
 /* Fonction limitation requêtes création compte */

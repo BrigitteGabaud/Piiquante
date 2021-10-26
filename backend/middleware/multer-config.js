@@ -1,3 +1,4 @@
+"use strict";
 const multer = require('multer');
 
 /* Dictionnaire mime_types */

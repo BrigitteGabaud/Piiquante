@@ -1,3 +1,4 @@
+"use strict";
 const Sauce = require('../models/sauces');
 /* donne accès aux opérations liées aux syst de fichiers */
 const fs = require('fs'); 
