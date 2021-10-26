@@ -1,4 +1,5 @@
 /* Import des dépendances */
+require('dotenv').config()
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
@@ -8,7 +9,7 @@ const saucesRoutes = require('./routes/sauces');
 const usersRoutes = require('./routes/user');
 
 /* Connexion base de données */
-mongoose.connect("mongodb+srv://Bri:BriexoOC@clustersopekocko.stgj0.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+mongoose.connect(process.env.DB_LINK,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
