@@ -1,6 +1,8 @@
 "use strict";
+/* Import des dépendances */
 const mongoose = require('mongoose');
 
+/* Création schéma de données sauce */
 const sauceSchema = mongoose.Schema({
     userId: {type: String, required: true},
     name: {type: String, required: true},
@@ -15,4 +17,5 @@ const sauceSchema = mongoose.Schema({
     usersDisliked: {type: Array},
 });
 
+/* Export schéma de données sauce */
 module.exports = mongoose.model('Sauce', sauceSchema);

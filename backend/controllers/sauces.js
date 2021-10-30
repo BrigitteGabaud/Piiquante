@@ -1,44 +1,45 @@
 "use strict";
+/* Import modele sauce */
 const Sauce = require('../models/sauces');
-/* donne accès aux opérations liées aux syst de fichiers */
+/* Donne accès aux opérations liées aux syst de fichiers (modif /suppr) */ 
 const fs = require('fs'); 
-const User = require('../models/User');
 
-
-/* Export de la fonction création Sauce (POST) */
+///*** FONCTIONS CRUD ***///
+/*** Export de la fonction CREATION Sauce (POST) ***/
 exports.createSauce = (req, res, next) => {
     /* Convertit chaîne caractères (= objet js) du corps requête 'req.body.sauce' en objet json extrait du 'sauce' */
     const sauceObject = JSON.parse(req.body.sauce);
     /* Supprime id de sauceObject */
     delete sauceObject._id;
     const sauce = new Sauce({
-        ...sauceObject, 
+        ...sauceObject, // opé spread copie ts élmts sauceObject
         /* Génère url image = protocole + nom hôte + 'image' + nom fichier */
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+        /* Initialise likes et dislikes à 0 */
         likes: 0,
         dislikes: 0,
        
     });
-    sauce.save()
+    sauce.save() // enregistre sauce dans db et renvoie promise
     .then(() => res.status(201).json({ message: 'Sauce enregistrée !'}))
     .catch(error => res.status(400).json({ error })); 
 }
 
-/* Export de la fonction récupération une sauce */
+/*** Export de la fonction RECUPERATION UNE sauce (GET) ***/
 exports.getOneSauce = (req, res, next) => {
-    Sauce.findOne({_id: req.params.id}) 
+    Sauce.findOne({_id: req.params.id}) // := rend segment dyn route dispo comme param
     .then(sauce => res.status(200).json(sauce))
     .catch(error => res.status(400).json({ error }));
 };
 
-/* Export de la fonction récupération de toutes les sauces */
+/***  Export de la fonction RECUPERATION TOUTES sauces (GET) ***/
 exports.getAllSauces = (req, res, next) => {
     Sauce.find()
     .then(sauces => res.status(200).json(sauces))
     .catch(error => res.status(400).json({ error }));
 };
 
-/* Export de la fonction modification sauce */
+/*** Export de la fonction MODIFICATION sauce (PUT) ***/
 exports.modifySauce = (req, res, next) => {
     // Récupère l'id de l'utilisateur effectuant la requête
     const reqUserId = req.user.userId;
@@ -72,7 +73,7 @@ exports.modifySauce = (req, res, next) => {
     .catch(error => res.status(404).json({ error }))
 }
 
-/* Export de la fonction suppression sauce */
+/*** Export de la fonction SUPPRESSION sauce (DELETE) ***/
 exports.deleteSauce = (req, res, next) => {
     const reqUserId = req.user.userId;
 
@@ -104,16 +105,14 @@ exports.deleteSauce = (req, res, next) => {
     })
 }
 
-/* Export de la fonction gérer les likes d'une sauce */
+/* Export de la fonction GESTION likes d'une sauce */
 exports.isItLiked = (req, res, next) => {
+    /* Fonctions de récupération des infos d'une sauce */
     const nomberOfUserLike = req.body.like;
-    console.log('nomberOfUserLike: ', nomberOfUserLike);
     const userId = req.body.userId;
-    console.log('userId: ', userId);
     const sauceId = req.params.id;
-    console.log('quel id ?' , req.user);
         
-        // like = 1
+        // Si like = 1
         if (nomberOfUserLike == 1) {
             console.log('nomberOfUserLike dans 1:', nomberOfUserLike);
             Sauce.updateOne({_id:sauceId},

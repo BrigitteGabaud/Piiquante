@@ -1,5 +1,8 @@
 "use strict";
+// Import Joi
 const joi = require('joi');
+
+// Construction schema validation email + pasword
 const schemaSignup = joi.object({
     email: joi.string()
     .email({minDomainSegments:2, tlds:{allow:["com", "fr", "net"]}})

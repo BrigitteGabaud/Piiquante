@@ -1,12 +1,13 @@
 "use strict";
-/* Import des dépendances */
+/* Import des dépendances et fonctions */
 const express = require('express');
-const router = express.Router();
+const router = express.Router(); // création router
 
-const sauceCtrl = require('../controllers/sauces');
-const auth = require('../middleware/auth');
-const multer = require('../middleware/multer-config');
+const sauceCtrl = require('../controllers/sauces');// import controller
+const auth = require('../middleware/auth'); // import middl auth
+const multer = require('../middleware/multer-config'); // import pack gestion fichiers
 
+/*** ROUTEUR CRUD ***/
 /* Route Post: crée une nouvelle sauce*/
 router.post('/', auth, multer, sauceCtrl.createSauce);
 

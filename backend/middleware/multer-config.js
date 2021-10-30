@@ -1,4 +1,5 @@
 "use strict";
+/* Import package gestion de fichiers */
 const multer = require('multer');
 
 /* Dictionnaire mime_types */
@@ -8,8 +9,8 @@ const MIME_TYPES = {
     'image.png': 'jpg'
 }
 
-/* Fichier de configuration multer */
-const storage = multer.diskStorage({
+/* Objet de configuration multer */
+const storage = multer.diskStorage({ // enregistre sur le disque
     /* Indique dans quel dossier enregistrer les fichiers */
     destination: (req, file, callback) => {
         /* 1er arg null= pas d'erreur, 2e arg nom du dossier */
@@ -21,7 +22,7 @@ const storage = multer.diskStorage({
         const name = file.originalname.split(' ').join('_');
         /* Création extension fichier à l'aide dico*/
         const extension = MIME_TYPES[file.mimetype];
-        /* Appel callback + création filename: name + timestamp (rend unique) + '.' + ext */
+        /* Appel callback : création filename: name + timestamp (rend unique) + '.' + ext = génération nom fichier unique */
         callback(null, name + Date.now() + '.' + extension);
     }
 });
