@@ -20,7 +20,7 @@ mongoose.connect(process.env.DB_LINK, // renvoie vers le fichier .env cont lien 
 /* Crée application express */
 const app = express();
 
-/* Middleware général configuration headers appliqué à toutes les routes  */
+/* Configuration headers appliquée à toutes les routes (CORS)  */
 /* Permet au front-end d'accéder à l'API */
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*'); // =  ok accès à tout le monde

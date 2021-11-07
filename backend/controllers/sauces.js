@@ -9,7 +9,7 @@ const fs = require('fs');
 exports.createSauce = (req, res, next) => {
     /* Convertit chaîne caractères (= objet js) du corps requête 'req.body.sauce' en objet json extrait du 'sauce' */
     const sauceObject = JSON.parse(req.body.sauce);
-    /* Supprime id de sauceObject */
+    /* Supprime id de sauceObject créé par frontend */
     delete sauceObject._id;
     const sauce = new Sauce({
         ...sauceObject, // opé spread copie ts élmts sauceObject
@@ -70,7 +70,7 @@ exports.modifySauce = (req, res, next) => {
         }
             
     })
-    .catch(error => res.status(404).json({ error }))
+    .catch(error => res.status(500).json({ error }))
 }
 
 /*** Export de la fonction SUPPRESSION sauce (DELETE) ***/
@@ -114,7 +114,6 @@ exports.isItLiked = (req, res, next) => {
         
         // Si like = 1
         if (nomberOfUserLike == 1) {
-            console.log('nomberOfUserLike dans 1:', nomberOfUserLike);
             Sauce.updateOne({_id:sauceId},
             // Ajoute id dans tab usersLiked , ajoute 1 like
             {$push: {usersLiked: userId}, $inc: {likes: 1}})
