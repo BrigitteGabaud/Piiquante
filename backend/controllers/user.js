@@ -8,21 +8,24 @@ const schemaAuth = require('../schema/schemaAuth')
 const User = require('../models/User');
 
 /* Export de la fonction inscription */
-exports.signup =  (req, res, next)=> {
-        schemaAuth.validateAsync(req.body)
-        .then(() => {
-            /* cherche user dans db par son ad mail */
-            return User.findOne({email: req.body.email}) 
-        })
-        .catch(error => res.status(400).json({ error }))
-    
+exports.signup = async (req, res, next)=> {
+    try{
+        /* Vérifie si la requête correspond au schémaAuth */
+        const joiValidator = await schemaAuth.validateAsync(req.body)
+        if(!joiValidator){
+            return res.status(400).json({ error })
+        }
+       
+        /* cherche user dans db par son ad mail */
+        const emailDb = await User.findOne({ email: req.body.email })
+
     /* vérifie si elle est unique*/
-    .then(user => {
-        if(user) {
+    
+        if(emailDb) {
             return  res.status(403).json({ error: 'Adresse mail déjà enregistrée.'})};
-    })
-    /* Hache le mot de passe 10x */    
-    bcrypt.hash(req.body.password, 10)
+            /* Hache le mot de passe 10x */    
+            bcrypt.hash(req.body.password, 10)
+        
     .then(hash => {
         /* création utilisateur */
         const user = new User({
@@ -31,21 +34,27 @@ exports.signup =  (req, res, next)=> {
         })
         user.save() // enregistrement utilisateur dans db
         .then(() => res.status(201).json({ message: 'Utilisateur créé !'}))
+        .catch(error => res.status(400).json({ error }))
     })
     .catch(error => res.status(500).json({ error })); 
+    }
+    catch(err){
+        return res.status(500).json({ err })
+    }
+        
 };
 
 /* Export de la fonction authentification */
-exports.login = (req, res, next)=> {
-    schemaAuth.validateAsync(req.body)
-        .then(() => {
-            /* cherche user dans db par son ad mail */
-            return User.findOne({email: req.body.email}) 
-        })
-        .catch(error => res.status(400).json({ error }))
-    
-    /* vérifie si elle est unique*/
-    .then(user => {
+exports.login = async (req, res, next)=> {
+    try{
+        /* Vérifie si la requête correspond au schémaAuth */
+        const joiValidator = await schemaAuth.validateAsync(req.body)
+        if(!joiValidator){
+            return res.status(400).json({ error })
+        }
+        /* cherche user dans db par son ad mail */
+        const user = await User.findOne({ email: req.body.email })
+        /* vérifie si elle est unique*/    
         if(!user) {
             return res.status(401).json({ error: 'Utilisateur non trouvé !'}); 
         }
@@ -65,7 +74,9 @@ exports.login = (req, res, next)=> {
                 )
             });
         }) 
-        .catch(error => res.status(500).json({ message: error.message}));
-    })
-    .catch(error => res.status(500).json({ message: error.message }))
+        .catch(error => res.status(500).json({ message: error.message}))
+    }
+    catch(err){
+        return res.status(500).json({ err })
+    }
 };
