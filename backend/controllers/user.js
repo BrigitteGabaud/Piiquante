@@ -1,5 +1,6 @@
 "use strict";
 /* Import dépendances */
+require('dotenv').config()
 const bcrypt = require('bcrypt'); // package hash password
 const jwt = require('jsonwebtoken'); // package génération + vérif token
 const schemaAuth = require('../schema/schemaAuth')
@@ -19,24 +20,25 @@ exports.signup = async (req, res, next)=> {
         /* cherche user dans db par son ad mail */
         const emailDb = await User.findOne({ email: req.body.email })
 
-    /* vérifie si elle est unique*/
-    
+        /* vérifie si elle est unique*/
         if(emailDb) {
-            return  res.status(403).json({ error: 'Adresse mail déjà enregistrée.'})};
-            /* Hache le mot de passe 10x */    
-            bcrypt.hash(req.body.password, 10)
+            return  res.status(403).json({ error: 'Adresse mail déjà enregistrée.'})
+        };
+
+        /* Hache le mot de passe 10x */    
+        bcrypt.hash(req.body.password, 10)
         
-    .then(hash => {
-        /* création utilisateur */
-        const user = new User({
-            email: req.body.email,
-            password: hash
+        .then(hash => {
+            /* création utilisateur */
+            const user = new User({
+                email: req.body.email,
+                password: hash
+            })
+            user.save() // enregistrement utilisateur dans db
+            .then(() => res.status(201).json({ message: 'Utilisateur créé !'}))
+            .catch(error => res.status(400).json({ error }))
         })
-        user.save() // enregistrement utilisateur dans db
-        .then(() => res.status(201).json({ message: 'Utilisateur créé !'}))
-        .catch(error => res.status(400).json({ error }))
-    })
-    .catch(error => res.status(500).json({ error })); 
+        .catch(error => res.status(500).json({ error })); 
     }
     catch(err){
         return res.status(500).json({ err })
@@ -69,6 +71,7 @@ exports.login = async (req, res, next)=> {
                 userId: user._id,
                 token: jwt.sign( // appel fonction jwt
                     { userId: user._id }, // 1er arg = "paylod" avec données à encoder
+                    //'RANDOM_SECRET_TOKEN',
                     process.env.SECRET_KEY_JWT, // 2e arg = clé secrète pour encodage
                     { expiresIn: '24h'} // 3e arg config delai expiration token
                 )

@@ -50,8 +50,8 @@ exports.modifySauce = (req, res, next) => {
         // Si l'userId de la BDD correspond à celui de la requête
         if(sauceResponse.userId == reqUserId ) {
 
-            // l'image est modifiée
-            /* Y a t-il une requête pour un fichier image ? */
+            /* La sauce est modifiée */
+            // Y a t-il une requête pour un fichier image ? 
             const sauceObject = req.file ?
             {
             // Récupère toutes les informations de la sauce
@@ -65,7 +65,7 @@ exports.modifySauce = (req, res, next) => {
             .then(() => res.status(200).json({ message: 'Sauce modifiée !'}))
             .catch(error => res.status(400).json({ error }));
         } else {
-            // Sinon envoie un message d'erreur et arrête le code (return)
+            /*Sinon envoie un message d'erreur et arrête le code (return)*/
             return res.status(403).json({message:  `403: unauthorized request `})
         }
             
